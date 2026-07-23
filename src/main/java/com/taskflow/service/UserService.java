@@ -14,10 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-/**
- * Business logic for User operations.
- * Delegates persistence to UserRepository and password hashing to PasswordEncoder.
- */
+// Business logic for User operations.
+
 @Service
 @RequiredArgsConstructor  // Lombok: constructor injection for all final fields
 public class UserService {
@@ -25,10 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * Register a new user.
-     * @throws EmailAlreadyExistsException if the email is already taken
-     */
+    // Register a new user
     @Transactional
     public UserResponse register(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -46,10 +41,7 @@ public class UserService {
         return UserMapper.toResponse(saved);
     }
 
-    /**
-     * Look up a user by ID.
-     * @throws ResourceNotFoundException if no user with this ID exists
-     */
+    // Look up a user by ID
     @Transactional(readOnly = true)
     public UserResponse getById(UUID id) {
         User user = userRepository.findById(id)

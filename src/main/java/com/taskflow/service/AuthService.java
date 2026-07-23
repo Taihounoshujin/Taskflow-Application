@@ -10,9 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-/**
- * Handles login: verifies credentials, issues JWT.
- */
+// Handles login: verifies credentials, issues JWT.
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -21,21 +19,14 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    /**
-     * Authenticate credentials and return a signed JWT.
-     * <p>
-     * authenticationManager.authenticate() calls CustomUserDetailsService
-     * to load the user and verifies the password against the BCrypt hash.
-     * If credentials are wrong, it throws BadCredentialsException (401).
-     */
     public AuthResponse login(LoginRequest request) {
-        // Verify email + password. Throws on failure.
+        // Verify email + password
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(), request.getPassword())
         );
 
-        // If we got here, credentials are valid. Load user for the response body.
+        // Load user for the response body, credentials valid
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found: " + request.getEmail()));

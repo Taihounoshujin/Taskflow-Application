@@ -13,16 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
-/**
- * Runs on every incoming request. Looks for a Bearer token in the
- * Authorization header, validates it, and populates the Spring Security context.
- * <p>
- * Extends OncePerRequestFilter so it fires exactly once per request
- * (some Spring filters can be invoked multiple times otherwise).
- */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {

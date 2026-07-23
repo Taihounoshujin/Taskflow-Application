@@ -7,13 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * A BoardColumn is a vertical lane on a Board (e.g. "To Do", "In Progress", "Done").
- * <p>
- * Named BoardColumn (not Column) to avoid collision with:
- *   - SQL reserved keyword "COLUMN"
- *   - jakarta.persistence.Column annotation
- */
 @Entity
 @Table(name = "board_columns")
 @Getter
@@ -30,10 +23,7 @@ public class BoardColumn {
     @Column(nullable = false)
     private String name;
 
-    /**
-     * Ordering field for left-to-right column placement.
-     * Lower numbers appear first.
-     */
+// left-to-right column placement
     @Column(nullable = false)
     private Integer position;
 

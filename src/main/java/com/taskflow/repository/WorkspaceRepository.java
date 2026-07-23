@@ -7,16 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Repository for Workspace entities.
- * Provides CRUD plus lookup by owner.
- */
+// Repository for Workspace entities
 @Repository
 public interface WorkspaceRepository extends JpaRepository<Workspace, UUID> {
 
-    /**
-     * Find all workspaces owned by a specific user.
-     * Powers the "list my workspaces" endpoint.
-     */
+    //Find all workspaces owned by a specific user
     List<Workspace> findByOwner_Id(UUID ownerId);
 }

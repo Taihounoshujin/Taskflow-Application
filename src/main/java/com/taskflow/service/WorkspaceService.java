@@ -15,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Business logic for Workspace operations.
- * A workspace belongs to exactly one user (the owner).
- */
+// Business logic for Workspace operations.
+
 @Service
 @RequiredArgsConstructor
 public class WorkspaceService {
@@ -26,10 +24,7 @@ public class WorkspaceService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
 
-    /**
-     * Create a new workspace for the given owner.
-     * @throws ResourceNotFoundException if the owner doesn't exist
-     */
+    // Create a new workspace for the given owner.
     @Transactional
     public WorkspaceResponse create(CreateWorkspaceRequest request) {
         User owner = userRepository.findById(request.getOwnerId())
@@ -51,9 +46,7 @@ public class WorkspaceService {
         return WorkspaceMapper.toResponse(workspace);
     }
 
-    /**
-     * List all workspaces owned by a given user.
-     */
+    // List all workspaces owned by a given user
     @Transactional(readOnly = true)
     public List<WorkspaceResponse> listByOwner(UUID ownerId) {
         return workspaceRepository.findByOwner_Id(ownerId).stream()
@@ -61,9 +54,7 @@ public class WorkspaceService {
                 .toList();
     }
 
-    /**
-     * Delete a workspace. Cascades to boards (see @OneToMany cascade on Workspace).
-     */
+    // Delete a workspace. Cascades to boards (see @OneToMany cascade on Workspace)
     @Transactional
     public void delete(UUID id) {
         if (!workspaceRepository.existsById(id)) {

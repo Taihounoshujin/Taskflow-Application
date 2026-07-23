@@ -1,14 +1,9 @@
 package com.taskflow.dto.response;
 
 import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Standard error envelope returned by @ControllerAdvice.
- * Keeps API errors consistent — clients can rely on the shape.
- */
 @Getter
 @Setter
 @NoArgsConstructor

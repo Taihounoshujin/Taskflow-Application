@@ -12,12 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 
-/**
- * Handles JWT token creation, parsing, and validation.
- * <p>
- * Uses HS256 (HMAC + SHA-256). The secret key is loaded from
- * application.yml (app.jwt.secret) — must be at least 32 characters.
- */
+// Handles JWT token creation, parsing, and validation.Uses HS256 (HMAC + SHA-256). The secret key is loaded from application.yml (app.jwt.secret): must be at least 32 characters.
 @Service
 public class JwtService {
 
@@ -35,9 +30,7 @@ public class JwtService {
         signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * Generate a JWT token for the given user email (used as the subject).
-     */
+    // Generate a JWT token for the given user email
     public String generateToken(String email) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
@@ -50,18 +43,13 @@ public class JwtService {
                 .compact();
     }
 
-    /**
-     * Extract the email (subject) from a token.
-     * Throws JwtException (or subclass) if the token is invalid or expired.
-     */
+    // Extract the email (subject) from a token
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    /**
-     * Check whether a token is valid and hasn't expired.
-     * Returns true only if signature verifies AND expiration is in the future.
-     */
+    // Check whether a token is valid and hasn't expired
+     // Returns true only if signature verifies AND expiration is in the future
     public boolean isTokenValid(String token, String expectedEmail) {
         try {
             String email = extractEmail(token);

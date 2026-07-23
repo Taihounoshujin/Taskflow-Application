@@ -5,14 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-/**
- * Payload for POST /api/users/register.
- * <p>
- * Using a DTO (not the entity) means:
- *   - clients can't accidentally set id, createdAt, or other server-managed fields
- *   - validation lives on the API contract, not the persistence model
- *   - the API shape can evolve independently of the DB schema
- */
 @Getter
 @Setter
 @NoArgsConstructor

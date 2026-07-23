@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * A Workspace is a container for Boards, owned by a single User.
- * Think of it as a "team" or "organization" — one user, many boards.
- */
 @Entity
 @Table(name = "workspaces")
 @Getter

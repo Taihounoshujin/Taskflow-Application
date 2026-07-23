@@ -24,10 +24,6 @@ public class WorkspaceController {
     private final WorkspaceService workspaceService;
     private final UserRepository userRepository;
 
-    /**
-     * POST /api/workspaces — create a workspace owned by the current user.
-     * ownerId is now derived from the JWT, not the request body.
-     */
     @PostMapping
     public ResponseEntity<WorkspaceResponse> create(
             @Valid @RequestBody CreateWorkspaceRequest request,
@@ -43,13 +39,11 @@ public class WorkspaceController {
         return new ResponseEntity<>(workspaceService.create(request), HttpStatus.CREATED);
     }
 
-    /** GET /api/workspaces/{id} — anyone authenticated can view (auth improvements later). */
     @GetMapping("/{id}")
     public ResponseEntity<WorkspaceResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(workspaceService.getById(id));
     }
 
-    /** GET /api/workspaces/me — list workspaces owned by the current user. */
     @GetMapping("/me")
     public ResponseEntity<List<WorkspaceResponse>> listMine(
             @AuthenticationPrincipal UserDetails principal) {
@@ -58,7 +52,6 @@ public class WorkspaceController {
         return ResponseEntity.ok(workspaceService.listByOwner(currentUser.getId()));
     }
 
-    /** DELETE /api/workspaces/{id} */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         workspaceService.delete(id);

@@ -5,10 +5,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Safe outbound representation of a User.
- * Notably excludes passwordHash — never expose that, even hashed.
- */
 @Getter
 @Setter
 @NoArgsConstructor

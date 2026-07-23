@@ -15,7 +15,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /** POST /api/auth/login — exchange email+password for a JWT. */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));

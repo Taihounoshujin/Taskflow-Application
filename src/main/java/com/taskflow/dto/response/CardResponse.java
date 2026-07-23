@@ -18,8 +18,8 @@ public class CardResponse {
     private Integer position;
     private LocalDateTime dueDate;
     private UUID columnId;
-    private UUID assigneeId;      // nullable
-    private Set<UUID> labelIds;   // flat IDs; expand into full DTOs later if needed
+    private UUID assigneeId;      // can be null
+    private Set<UUID> labelIds;   // flat IDs, can be full DTOs
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

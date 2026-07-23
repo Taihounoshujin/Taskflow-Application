@@ -6,12 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Represents a registered user of TaskFlow.
- * A user owns one or more Workspaces and can be assigned to Cards.
- */
 @Entity
-@Table(name = "users") // "user" is reserved in PostgreSQL
+@Table(name = "users") // "user is a keyword in Postgre
 @Getter
 @Setter
 @NoArgsConstructor

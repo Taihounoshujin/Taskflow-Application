@@ -8,10 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * A Card is an individual task — the central object users interact with.
- * Lives inside a BoardColumn, can be assigned to a User, can carry Labels.
- */
 @Entity
 @Table(name = "cards")
 @Getter
@@ -31,7 +27,7 @@ public class Card {
     @Column(length = 2000)
     private String description;
 
-    /** Ordering field for top-to-bottom card placement within a column. */
+    // top-to-bottom card placement within a column
     @Column(nullable = false)
     private Integer position;
 

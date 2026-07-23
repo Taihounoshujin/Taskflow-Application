@@ -23,6 +23,6 @@ public class CreateCardRequest {
 
     private LocalDateTime dueDate;
 
-    /** Optional — leave null to create unassigned. */
+    /** null to create unassigned. */
     private UUID assigneeId;
 }

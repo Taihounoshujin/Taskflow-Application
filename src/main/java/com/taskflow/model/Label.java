@@ -5,10 +5,6 @@ import lombok.*;
 
 import java.util.UUID;
 
-/**
- * A Label is a tag that can be applied to one or more Cards.
- * Labels are scoped to a Board.
- */
 @Entity
 @Table(name = "labels")
 @Getter
@@ -25,7 +21,7 @@ public class Label {
     @Column(nullable = false)
     private String name;
 
-    /** Hex color code, e.g. "#FF5733". */
+    // Hex color code
     @Column(nullable = false, length = 7)
     private String color;
 

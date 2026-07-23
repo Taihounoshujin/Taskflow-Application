@@ -10,12 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-/**
- * Spring Security bridge — loads a User from the database and wraps it
- * in Spring's UserDetails contract for authentication.
- * <p>
- * We use email as the "username" here since that's what users log in with.
- */
+// Spring Security bridge. Loads a User from the database and wraps it
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -28,7 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
         // Spring Security's built-in UserDetails implementation.
-        // No roles/authorities yet — just an empty list. Can add roles later.
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),

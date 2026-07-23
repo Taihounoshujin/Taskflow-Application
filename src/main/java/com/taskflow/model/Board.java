@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * A Board lives inside a Workspace and contains ordered Columns.
- * Example: "Q3 Product Launch", "Sprint 12", "Personal Tasks".
- */
 @Entity
 @Table(name = "boards")
 @Getter
