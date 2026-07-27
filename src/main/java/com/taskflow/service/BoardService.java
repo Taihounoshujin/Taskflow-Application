@@ -21,9 +21,11 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final OwnershipService ownershipService;
 
     @Transactional
-    public BoardResponse create(UUID workspaceId, CreateBoardRequest request) {
+    public BoardResponse create(UUID workspaceId, CreateBoardRequest request, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(workspaceId, currentUserId);
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace not found: " + workspaceId));
 
@@ -37,24 +39,24 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardResponse getById(UUID id) {
+    public BoardResponse getById(UUID id, UUID currentUserId) {
+        ownershipService.checkBoardOwnership(id, currentUserId);
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Board not found: " + id));
         return BoardMapper.toResponse(board);
     }
 
     @Transactional(readOnly = true)
-    public List<BoardResponse> listByWorkspace(UUID workspaceId) {
+    public List<BoardResponse> listByWorkspace(UUID workspaceId, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(workspaceId, currentUserId);
         return boardRepository.findByWorkspace_Id(workspaceId).stream()
                 .map(BoardMapper::toResponse)
                 .toList();
     }
 
     @Transactional
-    public void delete(UUID id) {
-        if (!boardRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Board not found: " + id);
-        }
+    public void delete(UUID id, UUID currentUserId) {
+        ownershipService.checkBoardOwnership(id, currentUserId);
         boardRepository.deleteById(id);
     }
 }

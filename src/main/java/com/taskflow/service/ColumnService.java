@@ -21,10 +21,12 @@ public class ColumnService {
 
     private final ColumnRepository columnRepository;
     private final BoardRepository boardRepository;
+    private final OwnershipService ownershipService;
 
     // Create a column and place it at the end of the board
     @Transactional
-    public ColumnResponse create(UUID boardId, CreateColumnRequest request) {
+    public ColumnResponse create(UUID boardId, CreateColumnRequest request, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(boardId, currentUserId);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new ResourceNotFoundException("Board not found: " + boardId));
 
@@ -41,24 +43,24 @@ public class ColumnService {
     }
 
     @Transactional(readOnly = true)
-    public ColumnResponse getById(UUID id) {
+    public ColumnResponse getById(UUID id, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(id, currentUserId);
         BoardColumn column = columnRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Column not found: " + id));
         return ColumnMapper.toResponse(column);
     }
 
     @Transactional(readOnly = true)
-    public List<ColumnResponse> listByBoard(UUID boardId) {
+    public List<ColumnResponse> listByBoard(UUID boardId, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(boardId, currentUserId);
         return columnRepository.findByBoard_IdOrderByPositionAsc(boardId).stream()
                 .map(ColumnMapper::toResponse)
                 .toList();
     }
 
     @Transactional
-    public void delete(UUID id) {
-        if (!columnRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Column not found: " + id);
-        }
+    public void delete(UUID id, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(id, currentUserId);
         columnRepository.deleteById(id);
     }
 }

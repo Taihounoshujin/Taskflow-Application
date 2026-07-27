@@ -23,13 +23,14 @@ public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final OwnershipService ownershipService;
 
     // Create a new workspace for the given owner.
     @Transactional
-    public WorkspaceResponse create(CreateWorkspaceRequest request) {
-        User owner = userRepository.findById(request.getOwnerId())
+    public WorkspaceResponse create(CreateWorkspaceRequest request, UUID currentUserId) {
+        User owner = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Owner not found: " + request.getOwnerId()));
+                        "Owner not found: " + currentUserId));
 
         Workspace workspace = Workspace.builder()
                 .name(request.getName())
@@ -40,7 +41,8 @@ public class WorkspaceService {
     }
 
     @Transactional(readOnly = true)
-    public WorkspaceResponse getById(UUID id) {
+    public WorkspaceResponse getById(UUID id, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(id, currentUserId);
         Workspace workspace = workspaceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace not found: " + id));
         return WorkspaceMapper.toResponse(workspace);
@@ -56,10 +58,8 @@ public class WorkspaceService {
 
     // Delete a workspace. Cascades to boards (see @OneToMany cascade on Workspace)
     @Transactional
-    public void delete(UUID id) {
-        if (!workspaceRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Workspace not found: " + id);
-        }
+    public void delete(UUID id, UUID currentUserId) {
+        ownershipService.checkWorkspaceOwnership(id, currentUserId);
         workspaceRepository.deleteById(id);
     }
 }

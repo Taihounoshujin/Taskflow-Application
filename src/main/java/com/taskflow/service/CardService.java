@@ -24,9 +24,11 @@ public class CardService {
     private final CardRepository cardRepository;
     private final ColumnRepository columnRepository;
     private final UserRepository userRepository;
+    private final OwnershipService ownershipService;
 
     @Transactional
-    public CardResponse create(UUID columnId, CreateCardRequest request) {
+    public CardResponse create(UUID columnId, CreateCardRequest request, UUID currentUserId) {
+        ownershipService.checkBoardOwnership(columnId, currentUserId);
         BoardColumn column = columnRepository.findById(columnId)
                 .orElseThrow(() -> new ResourceNotFoundException("Column not found: " + columnId));
 
@@ -55,14 +57,16 @@ public class CardService {
     }
 
     @Transactional(readOnly = true)
-    public CardResponse getById(UUID id) {
+    public CardResponse getById(UUID id, UUID currentUserId) {
+        ownershipService.checkBoardOwnership(id, currentUserId);
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Card not found: " + id));
         return CardMapper.toResponse(card);
     }
 
     @Transactional(readOnly = true)
-    public List<CardResponse> listByColumn(UUID columnId) {
+    public List<CardResponse> listByColumn(UUID columnId, UUID currentUserId) {
+        ownershipService.checkBoardOwnership(columnId, currentUserId);
         return cardRepository.findByColumn_IdOrderByPositionAsc(columnId).stream()
                 .map(CardMapper::toResponse)
                 .toList();
@@ -77,10 +81,8 @@ public class CardService {
     }
 
     @Transactional
-    public void delete(UUID id) {
-        if (!cardRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Card not found: " + id);
-        }
+    public void delete(UUID id, UUID currentUserId) {
+        ownershipService.checkBoardOwnership(id, currentUserId);
         cardRepository.deleteById(id);
     }
 }

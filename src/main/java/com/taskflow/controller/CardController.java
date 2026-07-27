@@ -24,21 +24,35 @@ public class CardController {
     private final CardService cardService;
     private final UserRepository userRepository;
 
+    private UUID getCurrentUserId(UserDetails principal) {
+        return userRepository.findByEmail(principal.getUsername())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"))
+                .getId();
+    }
+
     @PostMapping("/columns/{columnId}/cards")
     public ResponseEntity<CardResponse> create(
             @PathVariable UUID columnId,
-            @Valid @RequestBody CreateCardRequest request) {
-        return new ResponseEntity<>(cardService.create(columnId, request), HttpStatus.CREATED);
+            @Valid @RequestBody CreateCardRequest request,
+            @AuthenticationPrincipal UserDetails principal) {
+        UUID currentUserId = getCurrentUserId(principal);
+        return new ResponseEntity<>(cardService.create(columnId, request, currentUserId), HttpStatus.CREATED);
     }
 
     @GetMapping("/columns/{columnId}/cards")
-    public ResponseEntity<List<CardResponse>> listByColumn(@PathVariable UUID columnId) {
-        return ResponseEntity.ok(cardService.listByColumn(columnId));
+    public ResponseEntity<List<CardResponse>> listByColumn(
+            @PathVariable UUID columnId,
+            @AuthenticationPrincipal UserDetails principal) {
+        UUID currentUserId = getCurrentUserId(principal);
+        return ResponseEntity.ok(cardService.listByColumn(columnId, currentUserId));
     }
 
     @GetMapping("/cards/{id}")
-    public ResponseEntity<CardResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(cardService.getById(id));
+    public ResponseEntity<CardResponse> getById(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal) {
+        UUID currentUserId = getCurrentUserId(principal);
+        return ResponseEntity.ok(cardService.getById(id, currentUserId));
     }
 
     @GetMapping("/cards/me")
@@ -50,8 +64,11 @@ public class CardController {
     }
 
     @DeleteMapping("/cards/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        cardService.delete(id);
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal) {
+        UUID currentUserId = getCurrentUserId(principal);
+        cardService.delete(id, currentUserId);
         return ResponseEntity.noContent().build();
     }
 }

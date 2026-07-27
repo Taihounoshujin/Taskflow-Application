@@ -2,7 +2,6 @@ package com.taskflow.controller;
 
 import com.taskflow.dto.request.CreateWorkspaceRequest;
 import com.taskflow.dto.response.WorkspaceResponse;
-import com.taskflow.model.User;
 import com.taskflow.repository.UserRepository;
 import com.taskflow.service.WorkspaceService;
 import jakarta.validation.Valid;
@@ -24,37 +23,39 @@ public class WorkspaceController {
     private final WorkspaceService workspaceService;
     private final UserRepository userRepository;
 
+    /** Helper: resolve the current user's UUID from the JWT principal. */
+    private UUID getCurrentUserId(UserDetails principal) {
+        return userRepository.findByEmail(principal.getUsername())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"))
+                .getId();
+    }
+
     @PostMapping
     public ResponseEntity<WorkspaceResponse> create(
             @Valid @RequestBody CreateWorkspaceRequest request,
             @AuthenticationPrincipal UserDetails principal) {
-
-        // Look up the User entity by the email in the JWT.
-        User currentUser = userRepository.findByEmail(principal.getUsername())
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
-
-        // Overwrite whatever the client sent — never trust the client for identity.
-        request.setOwnerId(currentUser.getId());
-
-        return new ResponseEntity<>(workspaceService.create(request), HttpStatus.CREATED);
+        UUID currentUserId = getCurrentUserId(principal);
+        return new ResponseEntity<>(workspaceService.create(request, currentUserId), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WorkspaceResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(workspaceService.getById(id));
+    public ResponseEntity<WorkspaceResponse> getById(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal) {
+        return ResponseEntity.ok(workspaceService.getById(id, getCurrentUserId(principal)));
     }
 
     @GetMapping("/me")
     public ResponseEntity<List<WorkspaceResponse>> listMine(
             @AuthenticationPrincipal UserDetails principal) {
-        User currentUser = userRepository.findByEmail(principal.getUsername())
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
-        return ResponseEntity.ok(workspaceService.listByOwner(currentUser.getId()));
+        return ResponseEntity.ok(workspaceService.listByOwner(getCurrentUserId(principal)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        workspaceService.delete(id);
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal) {
+        workspaceService.delete(id, getCurrentUserId(principal));
         return ResponseEntity.noContent().build();
     }
 }
